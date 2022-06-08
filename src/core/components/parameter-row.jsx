@@ -235,6 +235,7 @@ export default class ParameterRow extends Component {
 
     let paramItems // undefined
     let paramEnum // undefined
+    let paramEnumLabels // undefined
     let paramDefaultValue // undefined
     let paramExample // undefined
     let isDisplayParamEnum = false
@@ -245,10 +246,13 @@ export default class ParameterRow extends Component {
 
     if (paramItems !== undefined) {
       paramEnum = paramItems.get("enum")
+      paramEnumLabels = paramItems.get("x-enum-labels")
       paramDefaultValue = paramItems.get("default")
     } else if (schema) {
       paramEnum = schema.get("enum")
+      paramEnumLabels = schema.get("x-enum-labels")
     }
+    console.log(paramEnumLabels)
 
     if ( paramEnum && paramEnum.size && paramEnum.size > 0) {
       isDisplayParamEnum = true
@@ -293,9 +297,17 @@ export default class ParameterRow extends Component {
 
           { (bodyParam || !isExecute) && isDisplayParamEnum ?
             <Markdown className="parameter__enum" source={
-                "<i>Available values</i> : " + paramEnum.map(function(item) {
-                    return item
-                  }).toArray().join(", ")}/>
+                "<i>Available values</i> : </br>" +
+                paramEnum.map(function(enumVal, enumIndex) {
+                  let enumName = ""
+                  paramEnumLabels.map(function(enumNameVal, enumNameIndex) {
+                      if (enumIndex === enumNameIndex) {
+                        enumName = enumNameVal
+                      }
+                  })
+                  return enumVal + ":"+ enumName
+
+                  }).join("<br/>")}/>
             : null
           }
 
